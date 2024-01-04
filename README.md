@@ -21,3 +21,5 @@ Originally found at https://gist.github.com/iiKurt/0c6d11d11590a781ea75ae2757fc1
 
 ## TODO
 - Article view count graph, like in the original widget
+- Widget padding is a little strange on macOS
+- Add some installation instructions here

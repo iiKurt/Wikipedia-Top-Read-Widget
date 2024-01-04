@@ -206,7 +206,7 @@ async function listItem(listStack, rank, title, description = "Some description"
   itemDescription.textColor = PREFS.foregroundSecondary;
 
   // View count
-  if (size == "large" || size == "small") {  
+  if (size != "medium") {  
     const statsStack = infoStack.addStack();
     statsStack.backgroundColor = PREFS.statsBackground;
     statsStack.cornerRadius = 4;

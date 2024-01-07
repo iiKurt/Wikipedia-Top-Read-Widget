@@ -39,10 +39,36 @@ const PREFS = {
     new Color("#3E75B5"),
     new Color("#4188A7"),
     new Color("#479B99")
-  ],
+    ],
   
   debugMode: false
 }
+
+
+/**
+* widgetParameters is the string passed
+* trough "Parameter" when setting up a widget
+* Here we use it as a language selector
+* and fall back to en if not set.
+* 
+* List of all wikipedias subdomains
+* https://gist.github.com/fr0r/869cf5d3266df689b6e9c3514991baf6
+**/
+let lang = args.widgetParameter || "en"
+
+/**
+* queryParameters is all args passed when running
+* the script trough an URLScheme, eg scriptable:///run/scriptName?lang=fr
+* */
+if (args.queryParameters.lang != undefined) {
+  lang = args.queryParameters.lang
+}
+
+/**
+* Sanitizing lang args, in case in contains erroneous
+* caracters such as space.
+* */
+lang = lang.trim();
 
 // Preview widget
 if (PREFS.debugMode) {
@@ -107,12 +133,14 @@ async function createWidget() {
   widget.setPadding(15, 15, 0, 15);
   // (top, leading, bottom, trailing)
 
-  const line = widget.addText("Top read");
-  line.font = Font.boldSystemFont(18);
-  line.textColor = PREFS.foregroundPrimary;
-  
-  // widget.addSpacer();
+  /* TODO: Localize "Top read" string based on selected language. */
+  /* TODO: Set topReadString as a larger element as to be able to click anywhere */
+  const topReadString = widget.addText("Top read");
+  topReadString.font = Font.boldSystemFont(18);
+  topReadString.textColor = PREFS.foregroundPrimary;
+  topReadString.url = "scriptable:///run/" + Script.name() + "?lang="+lang;
 
+  // widget.addSpacer();
   const listStack = widget.addStack();
   listStack.layoutVertically();
   listStack.setPadding(7.5, 0, 0, 0);
@@ -141,7 +169,7 @@ async function createWidget() {
       article.views,
       await loadThumbnail(article.thumbnail?.source),
       config.widgetFamily
-    );
+      );
   };
   
   // Small widgets only support one tap target - set it to the top article's URL
@@ -215,7 +243,7 @@ async function listItem(listStack, rank, title, description = "Some description"
     statsStack.setPadding(4, 4, 4, 4);
     // Graph would go here...
     //statsStack.addSpacer(32);
-  
+    
     const itemViews = statsStack.addText(formatNumber(views) + "");
     itemViews.font = Font.regularSystemFont(12);
     itemViews.textColor = PREFS.statsForeground;
@@ -232,16 +260,16 @@ async function listItem(listStack, rank, title, description = "Some description"
     else if (size == "medium") {
       spacing = 40;
     }
-  
+    
     // Some articles don't have a thumbnail provided
     if (thumbnail === undefined) {
       // Empty spot where thumbnail would usually be
       //itemStack.addSpacer(spacing);
       // SFSymbol.named("square.slash").image
       const missingThumbnailStack = itemStack.addStack();
-		missingThumbnailStack.backgroundColor = PREFS.foregroundTertiary;
-		missingThumbnailStack.cornerRadius = 8;
-		missingThumbnailStack.size = new Size(spacing, spacing);
+      missingThumbnailStack.backgroundColor = PREFS.foregroundTertiary;
+      missingThumbnailStack.cornerRadius = 8;
+      missingThumbnailStack.size = new Size(spacing, spacing);
     }
     else {
       const thumbnailImage = itemStack.addImage(thumbnail);
@@ -261,7 +289,7 @@ async function loadThumbnail(url) {
 }
 
 async function getTopRead(maximum) {
-  const apiUrl = 'https://en.wikipedia.org/api/rest_v1/feed/featured/';
+  const apiUrl = 'https://' + lang + '.wikipedia.org/api/rest_v1/feed/featured/';
 
   // Get current UTC date
   const currentDate = new Date().toISOString().split('T')[0].replace(/-/g, '/');

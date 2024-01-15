@@ -134,11 +134,9 @@ async function createWidget() {
   // (top, leading, bottom, trailing)
 
   /* TODO: Localize "Top read" string based on selected language. */
-  /* TODO: Set topReadString as a larger element as to be able to click anywhere */
   const topReadString = widget.addText("Top read");
   topReadString.font = Font.boldSystemFont(18);
   topReadString.textColor = PREFS.foregroundPrimary;
-  topReadString.url = "scriptable:///run/" + Script.name() + "?lang="+lang;
 
   // widget.addSpacer();
   const listStack = widget.addStack();
@@ -173,8 +171,12 @@ async function createWidget() {
   };
   
   // Small widgets only support one tap target - set it to the top article's URL
+  // For bigger widgets, all click on either "Top reads" or blank space will
+  // Open an UITable of the Top reads limited to PREFS.maximumArticles articles.
   if (config.widgetFamily == "small") {
     widget.url = topRead[0].content_urls.desktop.page;
+  } else {
+    widget.url = "scriptable:///run/" + Script.name() + "?lang="+lang;
   }
 
   // await listItem(listStack, 1, "Octavia E. Butler", "American science fiction writer", 10000, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Mexico_City_New_Years_2013%21_%288333128248%29.jpg/320px-Mexico_City_New_Years_2013%21_%288333128248%29.jpg");

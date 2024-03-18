@@ -70,6 +70,29 @@ if (args.queryParameters.lang != undefined) {
 * */
 lang = lang.trim();
 
+/**
+* Multi language dictionary
+* */
+function getDictionary(language) {
+    const text = {
+        en: {
+            topRead: 'Top read'
+        },
+        fr: {
+            topRead: 'Les plus lus'
+        }
+    };
+    return [Object.keys(text), text[language]];
+}
+
+const supportedLanguages = getDictionary(lang)[0];
+if (!(supportedLanguages.includes(lang))) {
+    console.log("Language Error: Language not found, defaulting to English.")
+    lang = "en";
+};
+const dictionary = getDictionary(lang)[1];
+
+
 // Preview widget
 if (PREFS.debugMode) {
   let widget = await createWidget();
@@ -133,8 +156,7 @@ async function createWidget() {
   widget.setPadding(15, 15, 0, 15);
   // (top, leading, bottom, trailing)
 
-  /* TODO: Localize "Top read" string based on selected language. */
-  const topReadString = widget.addText("Top read");
+  const topReadString = widget.addText(dictionary.topRead);
   topReadString.font = Font.boldSystemFont(18);
   topReadString.textColor = PREFS.foregroundPrimary;
 
